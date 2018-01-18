@@ -1,0 +1,44 @@
+<schemalist>
+	<schema id="org.mate.window-applets" path="/org/mate/window-applets/">
+		<child name="window-buttons" schema="org.mate.window-applets.window-buttons"/>
+	</schema>
+
+	<schema id="org.mate.window-applets.window-buttons" path="/org/mate/window-applets/window-buttons/">
+		<key name="use-marco-layout" type="b">
+			<default>true</default>
+			<summary>Determines if buttons will use marco order</summary>
+		</key>
+
+		<key name="buttons-layout" type="s">
+			<default>'close,maximize,minimize'</default>
+			<summary>Choose the order of the buttons</summary>
+			<description>
+			Values should be a string separated by ','.
+			The string may include "close","maximize","minimize".
+			Does not work when use-marco-order is set to true.
+			</description>
+		</key>
+
+		<key name="theme" type="s">
+			<default>'Black'</default>
+			<summary>Buttons theme</summary>
+		</key>
+
+		<key name="spacing" type="i">
+			<default>8</default>
+			<summary>Spacing betwene buttons</summary>
+		</key>
+
+		<key name="padding" type="i">
+			<default>4</default>
+			<summary>Padding betwene panel and buttons</summary>
+		</key>
+
+		<key name="control-maximized-window" type="b">
+			<default>false</default>
+			<summary>Whether the applet should control maximized windows only</summary>
+		</key>
+
+	</schema>
+
+</schemalist>

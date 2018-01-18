@@ -1,0 +1,15 @@
+
+[Applet Factory]
+Id=WindowButtonsAppletFactory
+InProcess=false
+Location=@LOCATION@
+Name=Widow Buttons Applet Factory
+Description=A Window Buttons Applet Factory
+
+[WindowButtonsApplet]
+Name=Window Buttons Applet
+Name[bg]=Аплет бутони на прозореца
+Description=A applet that shows window buttons on panel
+Description[bg]=Аплет който показва бутоните на прозореца върху панела
+Icon=mate
+MateComponentId=OAFIID:MATE_WindowButtonsApplet;

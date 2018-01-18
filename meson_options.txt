@@ -1,0 +1,3 @@
+option('build-window-buttons', type: 'boolean',value:true)
+option('build-window-menu', type: 'boolean',value:true)
+option('build-window-title', type: 'boolean',value:true)

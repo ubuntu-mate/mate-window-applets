@@ -1,0 +1,14 @@
+[Applet Factory]
+Id=WindowMenuAppletFactory
+InProcess=false
+Location=@LOCATION@
+Name=Widow Menu Applet Factory
+Description=A Window Menu Applet Factory
+
+[WindowMenuApplet]
+Name=Window Menu Applet
+Name[bg]=Аплет меню на прозореца
+Description=A applet that shows window menu on panel
+Description[bg]=Аплет който показва менюто на прозореца върху панела
+Icon=mate
+MateComponentId=OAFIID:MATE_WindowMenuApplet;

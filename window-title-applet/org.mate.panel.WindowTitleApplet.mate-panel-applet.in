@@ -1,0 +1,14 @@
+[Applet Factory]
+Id=WindowTitleAppletFactory
+InProcess=false
+Location=@LOCATION@
+Name=Widow Title Applet Factory
+Description=A Window Title Applet Factory
+
+[WindowTitleApplet]
+Name=Window Title Applet
+Name[bg]=Аплет заглавие на прозореца
+Description=A applet that shows window title on panel
+Description[bg]=Аплет който показва заглавието на прозореца върху панела
+Icon=mate
+MateComponentId=OAFIID:MATE_WindowTitleApplet;
