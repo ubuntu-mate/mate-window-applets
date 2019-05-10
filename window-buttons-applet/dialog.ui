@@ -10,7 +10,7 @@
     <property name="program_name">Mate Window Applets - Window Buttons</property>
     <property name="version">@VERSION@</property>
     <property name="copyright" translatable="yes">Copyright © 2017 Ivalin Radulov</property>
-    <property name="website">https://github.com/IKRadulov/mate-window-applets</property>
+    <property name="website">https://github.com/ubuntu-mate/mate-window-applets</property>
     <property name="logo_icon_name"/>
     <property name="license_type">gpl-3-0</property>
     <child internal-child="vbox">
