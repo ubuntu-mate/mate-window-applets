@@ -9,7 +9,9 @@ Description=A Window Buttons Applet Factory
 [WindowButtonsApplet]
 Name=Window Buttons Applet
 Name[bg]=Аплет бутони на прозореца
+Name[de]=Fensterknöpfe
 Description=A applet that shows window buttons on panel
 Description[bg]=Аплет който показва бутоните на прозореца върху панела
+Description[de]=Zeigt die Fensterknöpfe in der Leiste
 Icon=mate
 MateComponentId=OAFIID:MATE_WindowButtonsApplet;

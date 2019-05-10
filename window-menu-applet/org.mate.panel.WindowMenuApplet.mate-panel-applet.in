@@ -8,7 +8,9 @@ Description=A Window Menu Applet Factory
 [WindowMenuApplet]
 Name=Window Menu Applet
 Name[bg]=Аплет меню на прозореца
+Name[de]=Fenstermenü
 Description=A applet that shows window menu on panel
 Description[bg]=Аплет който показва менюто на прозореца върху панела
+Description[de]=Zeigt das Fenstermenü in der Leiste
 Icon=mate
 MateComponentId=OAFIID:MATE_WindowMenuApplet;

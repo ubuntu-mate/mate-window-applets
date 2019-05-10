@@ -8,7 +8,9 @@ Description=A Window Title Applet Factory
 [WindowTitleApplet]
 Name=Window Title Applet
 Name[bg]=Аплет заглавие на прозореца
+Name[de]=Fenstertitel
 Description=A applet that shows window title on panel
 Description[bg]=Аплет който показва заглавието на прозореца върху панела
+Description[de]=Zeigt den Fenstertitel in der Leiste
 Icon=mate
 MateComponentId=OAFIID:MATE_WindowTitleApplet;
