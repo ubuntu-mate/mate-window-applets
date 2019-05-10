@@ -1,4 +1,4 @@
-project('mate-window-applets','vala','c',version: '1.5.1',meson_version: '>=0.36.0')
+project('mate-window-applets','vala','c',version: '19.10.0',meson_version: '>=0.36.0')
 
 
 add_global_arguments(['--vapidir', join_paths(meson.current_source_dir(), 'vapi')],
