@@ -1,21 +1,35 @@
 namespace WindowTitleApplet{
-	public void reload(Gtk.Label label){
+
+	Gtk.Label title;
+	Wnck.Window *active_window;
+
+	public void reload(){
+		if(active_window != null){
+			active_window->name_changed.disconnect(update);
+		}
+
 		Wnck.Screen.get_default().force_update();
-		Wnck.Window *window = Wnck.Screen.get_default().get_active_window();
+		active_window = Wnck.Screen.get_default().get_active_window();
 
-		if(window != null){
-			label.set_label(window->get_name());
+		if(active_window != null){
+			update();
 
-			window->name_changed.connect( (window) => { reload(label); });
+			active_window->name_changed.connect(update);
 		}
 	}
+
+	public void update(){
+		title.set_label(active_window->get_name());
+		stdout.printf("set_label: %s\n", active_window->get_name());
+	}
+		
 
 	private bool factory(MatePanel.Applet applet,string iid){
 		if(iid != "WindowTitleApplet")return false;
 
-		Gtk.Label title = new Gtk.Label("");
+		title = new Gtk.Label("");
 
-		reload(title);
+		reload();
 
 		title.set_label(Wnck.Screen.get_default().get_active_window().get_name());
 
@@ -58,7 +72,7 @@ namespace WindowTitleApplet{
 		//--//applet.add(widget_container);
 		applet.show_all();
 
-		Wnck.Screen.get_default().active_window_changed.connect( (window) => { reload(title); });
+		Wnck.Screen.get_default().active_window_changed.connect( reload );
 
 		return true;
 	}
