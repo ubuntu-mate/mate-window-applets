@@ -12,7 +12,6 @@ namespace WindowButtonsApplet{
 			bool maximize ;
 		}
 
-		private Wnck.Window* prev_window = null;
 		private Wnck.Window* window = null;
 
 		public GLib.Settings gsettings = new GLib.Settings("org.mate.window-applets.window-buttons");
@@ -82,11 +81,9 @@ namespace WindowButtonsApplet{
 
 		public void reload(){
 
-			prev_window = window;
-
-			if(prev_window != null){
-				prev_window->actions_changed.disconnect(reload);
-				prev_window->state_changed.disconnect(reload);
+			if(window != null){
+				window->actions_changed.disconnect(reload);
+				window->state_changed.disconnect(reload);
 			}
 
 			window = get_current_window();
