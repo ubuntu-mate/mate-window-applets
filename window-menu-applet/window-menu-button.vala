@@ -42,20 +42,20 @@ namespace WindowWidgets{
 				_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
 				button_image.set_from_pixbuf(_icon);
 			}
+			else {
+				button_image.clear();
+			}
 		}
 
 		public void menu_set(){
 
-			if(_window != null){
-				if(_window.get_class_instance_name() != "desktop_window"){
-					this.set_popup(new Wnck.ActionMenu(_window));
-					this.set_sensitive(true);
-				}
-				else{
-					this.get_popup().detach();
-					this.set_sensitive(false);
-				}
-
+			if(_window != null && _window.get_class_instance_name() != "desktop_window"){
+				this.set_popup(new Wnck.ActionMenu(_window));
+				this.set_sensitive(true);
+			}
+			else{
+				this.get_popup().detach();
+				this.set_sensitive(false);
 			}
 
 		}

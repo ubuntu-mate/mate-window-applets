@@ -1,7 +1,15 @@
 <schemalist>
 	<schema id="org.mate.window-applets" path="/org/mate/window-applets/">
 		<child name="window-buttons" schema="org.mate.window-applets.window-buttons"/>
+		<child name="window-menu" schema="org.mate.window-applets.window-menu"/>
+		<child name="window-title" schema="org.mate.window-applets.window-title"/>
 	</schema>
+
+	<enum id="org.mate.window-applets.behaviours">
+		<value nick="active-always" value="1"/>
+		<value nick="active-maximized" value="2"/>
+		<value nick="topmost-maximized" value="3"/>
+	</enum>
 
 	<schema id="org.mate.window-applets.window-buttons" path="/org/mate/window-applets/window-buttons/">
 		<key name="use-marco-layout" type="b">
@@ -37,6 +45,29 @@
 		<key name="control-maximized-window" type="b">
 			<default>false</default>
 			<summary>Whether the applet should control maximized windows only</summary>
+		</key>
+
+		<key name="behaviour" enum="org.mate.window-applets.behaviours">
+			<default>'active-always'</default>
+			<summary>Which window is controlled by the applet</summary>
+		</key>
+
+	</schema>
+
+	<schema id="org.mate.window-applets.window-title" path="/org/mate/window-applets/window-title/">
+
+		<key name="behaviour" enum="org.mate.window-applets.behaviours">
+			<default>'active-always'</default>
+			<summary>Which window is controlled by the applet</summary>
+		</key>
+
+	</schema>
+
+	<schema id="org.mate.window-applets.window-menu" path="/org/mate/window-applets/window-menu/">
+
+		<key name="behaviour" enum="org.mate.window-applets.behaviours">
+			<default>'active-always'</default>
+			<summary>Which window is controlled by the applet</summary>
 		</key>
 
 	</schema>

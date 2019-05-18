@@ -81,30 +81,21 @@ namespace WindowButtonsApplet{
 		}
 
 		public void reload(){
-			bool control_maximized_window = gsettings.get_boolean("control-maximized-window");
 
 			prev_window = window;
 
-			prev_window->actions_changed.disconnect(reload);
-			prev_window->state_changed.disconnect(reload);
-			Wnck.Screen.get_default().force_update();
-			window = Wnck.Screen.get_default().get_active_window();
+			if(prev_window != null){
+				prev_window->actions_changed.disconnect(reload);
+				prev_window->state_changed.disconnect(reload);
+			}
+
+			window = get_current_window();
 
 			if(window != null){
 				window->actions_changed.connect(reload);
 				window->state_changed.connect(reload);
 
-				if(control_maximized_window){
-					if(window->is_maximized())reload_actions(window);
-					else{
-						CLOSE.set_visible(false);
-						MINIMIZE.set_visible(false);
-						MAXIMIZE.set_visible(false);
-					}
-				}
-				else{
-					reload_actions(window);
-				}
+				reload_actions(window);
 			}
 			else {
 				CLOSE.set_visible(false);
@@ -205,6 +196,35 @@ namespace WindowButtonsApplet{
 			this.set_spacing(spacing);
 		}
 
+		private Wnck.Window get_current_window(){
+			Wnck.Window* win = null;
+			string behaviour = gsettings.get_string("behaviour");
+
+			Wnck.Screen.get_default().force_update();
+
+			switch(behaviour){
+				case "active-always":
+					win = Wnck.Screen.get_default().get_active_window();
+				break;
+				case "active-maximized":
+					win = Wnck.Screen.get_default().get_active_window();
+					if(!win->is_maximized())
+						win = null;
+				break;
+				case "topmost-maximized":
+					List<Wnck.Window*> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
+					windows.reverse();
+					foreach(Wnck.Window* w in windows) {
+						if(w->is_maximized()){
+							win = w;
+							break;
+						}
+					}
+				break;
+			}
+
+			return win;
+		}
 	}
 
 	private bool factory(MatePanel.Applet applet,string iid){
@@ -249,14 +269,14 @@ namespace WindowButtonsApplet{
 		widget_container.gsettings.bind("theme",builder.get_object("theme"),"text",SettingsBindFlags.DEFAULT);
 		widget_container.gsettings.bind("spacing",builder.get_object("spacing"),"value",SettingsBindFlags.DEFAULT);
 		widget_container.gsettings.bind("padding",builder.get_object("padding"),"value",SettingsBindFlags.DEFAULT);
-		widget_container.gsettings.bind("control-maximized-window",builder.get_object("control-maximized-window"),"state",SettingsBindFlags.DEFAULT);
+		widget_container.gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
 
 		widget_container.gsettings.changed["use-marco-layout"].connect(widget_container.change_layout);
 		widget_container.gsettings.changed["buttons-layout"].connect(widget_container.change_layout);
 		widget_container.gsettings.changed["theme"].connect(widget_container.change_theme);
 		widget_container.gsettings.changed["spacing"].connect( (key) => { widget_container.change_size(applet.get_size()); } );
 		widget_container.gsettings.changed["padding"].connect( (key) => { widget_container.change_size(applet.get_size()); } );
-		widget_container.gsettings.changed["control-maximized-window"].connect( (key) => { widget_container.reload(); } );
+		widget_container.gsettings.changed["behaviour"].connect( (key) => { widget_container.reload(); } );
 		applet.setup_menu(menu,action_group);
 
 		settings.delete_event.connect( (event) => { settings.hide() ; return true ; } );
