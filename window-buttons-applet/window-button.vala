@@ -104,55 +104,23 @@ namespace WindowWidgets{
 			if(event->get_event_type() == Gdk.EventType.NOTHING || event->get_event_type() == Gdk.EventType.LEAVE_NOTIFY){
 				if(_button_type == WindowButtonType.CLOSE){
 					if(icon_theme.has_icon("close")){
-						try{
-							_icon = icon_theme.load_icon("close",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-							_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-						} catch (GLib.Error e){
-							stdout.printf("Error: %s\n", e.message);
-						}
+						set_icon_by_name("close");
 					}
 				}
 				else if(_button_type == WindowButtonType.MINIMIZE){
 					if(icon_theme.has_icon("minimize")){
-						try{
-							_icon = icon_theme.load_icon("minimize",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-							_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-						} catch (GLib.Error e){
-							stdout.printf("Error: %s\n", e.message);
-						}
+						set_icon_by_name("minimize");
 					}
 				}
 				else if(_button_type == WindowButtonType.MAXIMIZE){
-					if(_window != null){
-						if(_window.is_maximized()){
-							if(icon_theme.has_icon("unmaximize")){
-								try{
-									_icon = icon_theme.load_icon("unmaximize",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-									_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-								} catch (GLib.Error e){
-									stdout.printf("Error: %s\n", e.message);
-								}
-							}
-						}
-						else{
-							if(icon_theme.has_icon("maximize")){
-								try{
-									_icon = icon_theme.load_icon("maximize",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-									_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-								} catch (GLib.Error e){
-									stdout.printf("Error: %s\n", e.message);
-								}
-							}
+					if(_window != null && _window.is_maximized()){
+						if(icon_theme.has_icon("unmaximize")){
+							set_icon_by_name("unmaximize");
 						}
 					}
 					else{
 						if(icon_theme.has_icon("maximize")){
-							try{
-								_icon = icon_theme.load_icon("maximize",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-								_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-							} catch (GLib.Error e){
-								stdout.printf("Error: %s\n", e.message);
-							}
+							set_icon_by_name("maximize");
 						}
 					}
 				}
@@ -160,55 +128,23 @@ namespace WindowWidgets{
 			else if(event->get_event_type() == Gdk.EventType.ENTER_NOTIFY){
 				if(_button_type == WindowButtonType.CLOSE){
 					if(icon_theme.has_icon("close_hovered")){
-						try{
-							_icon = icon_theme.load_icon("close_hovered",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-							_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-						} catch (GLib.Error e){
-							stdout.printf("Error: %s\n", e.message);
-						}
+						set_icon_by_name("close_hovered");
 					}
 				}
 				else if(_button_type == WindowButtonType.MINIMIZE){
 					if(icon_theme.has_icon("minimize_hovered")){
-						try{
-							_icon = icon_theme.load_icon("minimize_hovered",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-							_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-						} catch (GLib.Error e){
-							stdout.printf("Error: %s\n", e.message);
-						}
+						set_icon_by_name("minimize_hovered");
 					}
 				}
 				else if(_button_type == WindowButtonType.MAXIMIZE){
-					if(_window != null){
-						if(_window.is_maximized()){
-							if(icon_theme.has_icon("unmaximize_hovered")){
-								try{
-									_icon = icon_theme.load_icon("unmaximize_hovered",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-									_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-								} catch (GLib.Error e){
-									stdout.printf("Error: %s\n", e.message);
-								}
-							}
-						}
-						else{
-							if(icon_theme.has_icon("maximize_hovered")){
-								try{
-									_icon = icon_theme.load_icon("maximize_hovered",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-									_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-								} catch (GLib.Error e){
-									stdout.printf("Error: %s\n", e.message);
-								}
-							}
+					if(_window != null && _window.is_maximized()){
+						if(icon_theme.has_icon("unmaximize_hovered")){
+							set_icon_by_name("unmaximize_hovered");
 						}
 					}
 					else{
 						if(icon_theme.has_icon("maximize_hovered")){
-							try{
-								_icon = icon_theme.load_icon("maximize_hovered",-1,Gtk.IconLookupFlags.FORCE_SIZE);
-								_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-							} catch (GLib.Error e){
-								stdout.printf("Error: %s\n", e.message);
-							}
+							set_icon_by_name("maximize_hovered");
 						}
 					}
 				}
@@ -222,6 +158,15 @@ namespace WindowWidgets{
 		public void theme_set(string value){
 			_theme = value;
 			icon_theme.set_custom_theme(_theme);
+		}
+
+		private void set_icon_by_name(string name){
+			try{
+				_icon = icon_theme.load_icon(name,-1,Gtk.IconLookupFlags.FORCE_SIZE);
+				_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
+			} catch (GLib.Error e){
+				stdout.printf("Error: %s\n", e.message);
+			}
 		}
 
 	}
