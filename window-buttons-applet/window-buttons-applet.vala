@@ -212,7 +212,7 @@ namespace WindowButtonsApplet{
 					List<Wnck.Window*> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
 					windows.reverse();
 					foreach(Wnck.Window* w in windows) {
-						if(w->is_maximized()){
+						if(w->is_maximized() && !w->is_minimized()){
 							win = w;
 							break;
 						}

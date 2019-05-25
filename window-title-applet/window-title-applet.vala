@@ -6,8 +6,11 @@ namespace WindowTitleApplet{
 	GLib.Settings gsettings;
 
 	public void reload(){
+		string behaviour = gsettings.get_string("behaviour");
+
 		if(window != null){
 			window->name_changed.disconnect(update);
+			window->state_changed.disconnect(reload);
 		}
 
 		window = get_current_window();
@@ -16,6 +19,8 @@ namespace WindowTitleApplet{
 
 		if(window != null){
 			window->name_changed.connect(update);
+			if(behaviour == "topmost-maximized")
+				window->state_changed.connect(reload);
 		}
 	}
 
@@ -50,7 +55,7 @@ namespace WindowTitleApplet{
 				List<Wnck.Window*> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
 				windows.reverse();
 				foreach(Wnck.Window* w in windows) {
-					if(w->is_maximized()){
+					if(w->is_maximized() && !w->is_minimized()){
 						win = w;
 						break;
 					}

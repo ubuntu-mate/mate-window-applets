@@ -8,9 +8,12 @@ namespace WindowMenuApplet{
 	GLib.Settings gsettings;
 
 	public void reload(){
+		string behaviour = gsettings.get_string("behaviour");
+
 		if(window != null){
 			window->icon_changed.disconnect(button.icon_set);
 			window->actions_changed.disconnect(button.menu_set);
+			window->state_changed.disconnect(reload);
 		}
 
 		window = get_current_window();
@@ -23,6 +26,8 @@ namespace WindowMenuApplet{
 		if(window != null){
 			window->icon_changed.connect(button.icon_set);
 			window->actions_changed.connect(button.menu_set);
+			if(behaviour == "topmost-maximized")
+				window->state_changed.connect(reload);
 		}
 	}
 
@@ -68,7 +73,7 @@ namespace WindowMenuApplet{
 				List<Wnck.Window*> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
 				windows.reverse();
 				foreach(Wnck.Window* w in windows) {
-					if(w->is_maximized()){
+					if(w->is_maximized() && !w->is_minimized()){
 						win = w;
 						break;
 					}
