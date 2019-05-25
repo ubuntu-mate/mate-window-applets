@@ -21,11 +21,13 @@ namespace WindowTitleApplet{
 
 	public void update(){
 		if(window != null){
-			title.set_label(window->get_name());
-			stdout.printf("set_label: %s\n", window->get_name());
+			string title_text = GLib.Markup.escape_text(window->get_name());
+			if(window->is_active())
+				title.set_markup(title_text);
+			else
+				title.set_markup("<span color='#808080'>"+title_text+"</span>");
 		} else {
 			title.set_label("");
-			stdout.printf("set_label: ''\n");
 		}
 	}
 

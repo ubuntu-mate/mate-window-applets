@@ -40,6 +40,9 @@ namespace WindowWidgets{
 			if(_window != null){
 				_icon = _window.get_icon();
 				_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
+				if(!_window.is_active()){
+					_icon.saturate_and_pixelate(_icon, 0, false);
+				}
 				button_image.set_from_pixbuf(_icon);
 			}
 			else {

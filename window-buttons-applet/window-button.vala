@@ -103,23 +103,31 @@ namespace WindowWidgets{
 		public void icon_set(Gdk.Event *event){
 			if(event->get_event_type() == Gdk.EventType.NOTHING || event->get_event_type() == Gdk.EventType.LEAVE_NOTIFY){
 				if(_button_type == WindowButtonType.CLOSE){
-					if(icon_theme.has_icon("close")){
+					if(_window != null && !_window.is_active() && icon_theme.has_icon("close_unfocused")){
+						set_icon_by_name("close_unfocused");
+					} else if(icon_theme.has_icon("close")){
 						set_icon_by_name("close");
 					}
 				}
 				else if(_button_type == WindowButtonType.MINIMIZE){
-					if(icon_theme.has_icon("minimize")){
+					if(_window != null && !_window.is_active() && icon_theme.has_icon("minimize_unfocused")){
+						set_icon_by_name("minimize_unfocused");
+					} else if(icon_theme.has_icon("minimize")){
 						set_icon_by_name("minimize");
 					}
 				}
 				else if(_button_type == WindowButtonType.MAXIMIZE){
 					if(_window != null && _window.is_maximized()){
-						if(icon_theme.has_icon("unmaximize")){
+						if(!_window.is_active() && icon_theme.has_icon("unmaximize_unfocused")){
+							set_icon_by_name("unmaximize_unfocused");
+						} else if(icon_theme.has_icon("unmaximize")){
 							set_icon_by_name("unmaximize");
 						}
 					}
 					else{
-						if(icon_theme.has_icon("maximize")){
+						if(!_window.is_active() && icon_theme.has_icon("maximize_unfocused")){
+							set_icon_by_name("maximize_unfocused");
+						} else if(icon_theme.has_icon("maximize")){
 							set_icon_by_name("maximize");
 						}
 					}
@@ -127,23 +135,31 @@ namespace WindowWidgets{
 			}
 			else if(event->get_event_type() == Gdk.EventType.ENTER_NOTIFY){
 				if(_button_type == WindowButtonType.CLOSE){
-					if(icon_theme.has_icon("close_hovered")){
+					if(_window != null && !_window.is_active() && icon_theme.has_icon("close_unfocused_hovered")){
+						set_icon_by_name("close_unfocused_hovered");
+					} else if(icon_theme.has_icon("close_hovered")){
 						set_icon_by_name("close_hovered");
 					}
 				}
 				else if(_button_type == WindowButtonType.MINIMIZE){
-					if(icon_theme.has_icon("minimize_hovered")){
+					if(_window != null && !_window.is_active() && icon_theme.has_icon("minimize_unfocused_hovered")){
+						set_icon_by_name("minimize_unfocused_hovered");
+					} else if(icon_theme.has_icon("minimize_hovered")){
 						set_icon_by_name("minimize_hovered");
 					}
 				}
 				else if(_button_type == WindowButtonType.MAXIMIZE){
 					if(_window != null && _window.is_maximized()){
-						if(icon_theme.has_icon("unmaximize_hovered")){
+						if(!_window.is_active() && icon_theme.has_icon("unmaximize_unfocused_hovered")){
+							set_icon_by_name("unmaximize_unfocused_hovered");
+						} else if(icon_theme.has_icon("unmaximize_hovered")){
 							set_icon_by_name("unmaximize_hovered");
 						}
 					}
 					else{
-						if(icon_theme.has_icon("maximize_hovered")){
+						if(!_window.is_active() && icon_theme.has_icon("maximize_unfocused_hovered")){
+							set_icon_by_name("maximize_unfocused_hovered");
+						} else if(icon_theme.has_icon("maximize_hovered")){
 							set_icon_by_name("maximize_hovered");
 						}
 					}
