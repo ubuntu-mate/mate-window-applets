@@ -72,6 +72,7 @@ namespace WindowTitleApplet{
 		gsettings = new GLib.Settings("org.mate.window-applets.window-title");
 
 		title = new Gtk.Label("");
+		title.ellipsize = Pango.EllipsizeMode.END;
 
 		reload();
 
