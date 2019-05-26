@@ -65,6 +65,18 @@ namespace WindowTitleApplet{
 
 		return win;
 	}
+		
+	private void clicked(Gdk.EventButton *event){
+		if(active_window != null){
+			active_window->activate(Gtk.get_current_event_time());
+			if(event->type == Gdk.EventType.2BUTTON_PRESS) {
+				if(active_window->is_maximized())
+					active_window->unmaximize();
+				else
+					active_window->maximize();
+			}
+		}
+	}
 
 	private bool factory(MatePanel.Applet applet,string iid){
 		if(iid != "WindowTitleApplet")return false;
@@ -109,7 +121,7 @@ namespace WindowTitleApplet{
 		gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
 		gsettings.changed["behaviour"].connect( (key) => { reload(); } );
 
-		applet.set_flags(MatePanel.AppletFlags.EXPAND_MAJOR);
+		applet.set_flags(MatePanel.AppletFlags.EXPAND_MINOR | MatePanel.AppletFlags.EXPAND_MAJOR);
 
 		applet.add(title);
 		applet.setup_menu(menu,action_group);
@@ -119,6 +131,8 @@ namespace WindowTitleApplet{
 
 		settings_action.activate.connect( () => { settings.present() ; } );
 		about_action.activate.connect( () => { about.present() ; } );
+
+		applet.button_press_event.connect( (widget,event) => { clicked(event); return false; } );
 
 		//applet.change_size.connect();
 
