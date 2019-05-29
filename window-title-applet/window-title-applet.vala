@@ -67,13 +67,13 @@ namespace WindowTitleApplet{
 	}
 		
 	private void clicked(Gdk.EventButton *event){
-		if(active_window != null){
-			active_window->activate(Gtk.get_current_event_time());
+		if(window != null){
+			window->activate(Gtk.get_current_event_time());
 			if(event->type == Gdk.EventType.2BUTTON_PRESS) {
-				if(active_window->is_maximized())
-					active_window->unmaximize();
+				if(window->is_maximized())
+					window->unmaximize();
 				else
-					active_window->maximize();
+					window->maximize();
 			}
 		}
 	}
