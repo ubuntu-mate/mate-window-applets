@@ -2,26 +2,38 @@ namespace WindowTitleApplet{
 
 	Gtk.Label title;
 	Wnck.Window *window;
+	Wnck.Window *active_window;
 
 	GLib.Settings gsettings;
 
 	public void reload(){
-		string behaviour = gsettings.get_string("behaviour");
-
+		
+		// Disconnect signals from old window
 		if(window != null){
 			window->name_changed.disconnect(update);
 			window->state_changed.disconnect(reload);
 		}
 
+		if(active_window != null)
+			active_window->state_changed.disconnect(reload);
+
+
 		window = get_current_window();
 
 		update();
 
+
+		// Watch for changes to new controlled window
 		if(window != null){
 			window->name_changed.connect(update);
-			if(behaviour == "topmost-maximized")
-				window->state_changed.connect(reload);
+			window->state_changed.connect(reload);
 		}
+
+		// When active window is not the controlled window (because it is unmaximized),
+		// we need to watch its state as well
+		active_window = Wnck.Screen.get_default().get_active_window();
+		if(active_window != null && active_window != window)
+			active_window->state_changed.connect(reload);
 	}
 
 	public void update(){
@@ -48,7 +60,7 @@ namespace WindowTitleApplet{
 			break;
 			case "active-maximized":
 				win = Wnck.Screen.get_default().get_active_window();
-				if(!win->is_maximized())
+				if(win != null && !win->is_maximized())
 					win = null;
 			break;
 			case "topmost-maximized":

@@ -13,6 +13,7 @@ namespace WindowButtonsApplet{
 		}
 
 		private Wnck.Window* window = null;
+		private Wnck.Window *active_window = null;
 
 		public GLib.Settings gsettings = new GLib.Settings("org.mate.window-applets.window-buttons");
 		public GLib.Settings marco_gsettings = new GLib.Settings("org.mate.Marco.general");
@@ -81,13 +82,19 @@ namespace WindowButtonsApplet{
 
 		public void reload(){
 
+			// Disconnect signals from old window
 			if(window != null){
 				window->actions_changed.disconnect(reload);
 				window->state_changed.disconnect(reload);
 			}
 
+			if(active_window != null)
+				active_window->state_changed.disconnect(reload);
+
+
 			window = get_current_window();
 
+			// Watch for changes to new controlled window
 			if(window != null){
 				window->actions_changed.connect(reload);
 				window->state_changed.connect(reload);
@@ -100,6 +107,11 @@ namespace WindowButtonsApplet{
 				MAXIMIZE.set_visible(false);
 			}
 
+			// When active window is not the controlled window (because it is unmaximized),
+			// we need to watch its state as well
+			active_window = Wnck.Screen.get_default().get_active_window();
+			if(active_window != null && active_window != window)
+				active_window->state_changed.connect(reload);
 		}
 
 		public void change_layout(){
@@ -205,7 +217,7 @@ namespace WindowButtonsApplet{
 				break;
 				case "active-maximized":
 					win = Wnck.Screen.get_default().get_active_window();
-					if(!win->is_maximized())
+					if(win != null && !win->is_maximized())
 						win = null;
 				break;
 				case "topmost-maximized":
