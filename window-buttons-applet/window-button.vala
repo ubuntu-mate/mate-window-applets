@@ -3,27 +3,17 @@ namespace WindowWidgets{
 		//Properties
 
 		private Gtk.Image button_image = new Gtk.Image();
-		private Gtk.IconTheme icon_theme = new Gtk.IconTheme();
 
 		private WindowButtonType _button_type;
-		private string _theme = "Black";
-		private Gdk.Pixbuf _icon;
 		private int _icon_size = 18;
 		private Wnck.Window _window;
+		private IconAction _current_action;
+
+		public WindowButtonsTheme theme;
 
 		public WindowButtonType button_type{
 			get{return _button_type;}
 			set{_button_type = value;}
-		}
-
-		public string theme{
-			get{return _theme;}
-			set{_theme = value;}
-		}
-
-		public Gdk.Pixbuf icon{
-			get{return _icon;}
-			set{_icon = value;}
 		}
 
 		public int icon_size{
@@ -46,17 +36,6 @@ namespace WindowWidgets{
 			this.add(button_image);
 			this.button_image.show();
 
-			icon_theme.set_screen(this.get_screen());
-
-			string[] global_path = { "/usr/share/icons/mate-window-applets/" , "/usr/local/share/icons/mate-window-applets/"};
-			string local_path = Environment.get_home_dir() + "/.icons/mate-window-applets/" ;
-
-			icon_theme.set_search_path(global_path);
-			icon_theme.append_search_path(local_path);
-
-			icon_theme.set_custom_theme(_theme);
-
-			this.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
 
 			// Time for connecting
 
@@ -77,8 +56,10 @@ namespace WindowWidgets{
 
 			});
 
-			this.enter_notify_event.connect( (object,event) => { this.icon_set(event); return false; } );
-			this.leave_notify_event.connect( (object,event) => { this.icon_set(event); return false; } );
+			this.enter_notify_event.connect( (object,event) => { this.event_set(event); return false; } );
+			this.leave_notify_event.connect( (object,event) => { this.event_set(event); return false; } );
+			this.button_press_event.connect( (object,event) => { this.event_set(event); return false; } );
+			this.button_release_event.connect( (object,event) => { this.event_set(event); return false; } );
 		}
 
 		//Helpers
@@ -100,89 +81,52 @@ namespace WindowWidgets{
 			}
 		}
 
-		public void icon_set(Gdk.Event *event){
-			if(event->get_event_type() == Gdk.EventType.NOTHING || event->get_event_type() == Gdk.EventType.LEAVE_NOTIFY){
-				if(_button_type == WindowButtonType.CLOSE){
-					if(_window != null && !_window.is_active() && icon_theme.has_icon("close_unfocused")){
-						set_icon_by_name("close_unfocused");
-					} else if(icon_theme.has_icon("close")){
-						set_icon_by_name("close");
-					}
-				}
-				else if(_button_type == WindowButtonType.MINIMIZE){
-					if(_window != null && !_window.is_active() && icon_theme.has_icon("minimize_unfocused")){
-						set_icon_by_name("minimize_unfocused");
-					} else if(icon_theme.has_icon("minimize")){
-						set_icon_by_name("minimize");
-					}
-				}
-				else if(_button_type == WindowButtonType.MAXIMIZE){
-					if(_window != null && _window.is_maximized()){
-						if(!_window.is_active() && icon_theme.has_icon("unmaximize_unfocused")){
-							set_icon_by_name("unmaximize_unfocused");
-						} else if(icon_theme.has_icon("unmaximize")){
-							set_icon_by_name("unmaximize");
-						}
-					}
-					else{
-						if(!_window.is_active() && icon_theme.has_icon("maximize_unfocused")){
-							set_icon_by_name("maximize_unfocused");
-						} else if(icon_theme.has_icon("maximize")){
-							set_icon_by_name("maximize");
-						}
-					}
-				}
-			}
-			else if(event->get_event_type() == Gdk.EventType.ENTER_NOTIFY){
-				if(_button_type == WindowButtonType.CLOSE){
-					if(_window != null && !_window.is_active() && icon_theme.has_icon("close_unfocused_hovered")){
-						set_icon_by_name("close_unfocused_hovered");
-					} else if(icon_theme.has_icon("close_hovered")){
-						set_icon_by_name("close_hovered");
-					}
-				}
-				else if(_button_type == WindowButtonType.MINIMIZE){
-					if(_window != null && !_window.is_active() && icon_theme.has_icon("minimize_unfocused_hovered")){
-						set_icon_by_name("minimize_unfocused_hovered");
-					} else if(icon_theme.has_icon("minimize_hovered")){
-						set_icon_by_name("minimize_hovered");
-					}
-				}
-				else if(_button_type == WindowButtonType.MAXIMIZE){
-					if(_window != null && _window.is_maximized()){
-						if(!_window.is_active() && icon_theme.has_icon("unmaximize_unfocused_hovered")){
-							set_icon_by_name("unmaximize_unfocused_hovered");
-						} else if(icon_theme.has_icon("unmaximize_hovered")){
-							set_icon_by_name("unmaximize_hovered");
-						}
-					}
-					else{
-						if(!_window.is_active() && icon_theme.has_icon("maximize_unfocused_hovered")){
-							set_icon_by_name("maximize_unfocused_hovered");
-						} else if(icon_theme.has_icon("maximize_hovered")){
-							set_icon_by_name("maximize_hovered");
-						}
-					}
-				}
+		public void update(bool reset = false){
+
+			IconType type;
+			if(_button_type == WindowButtonType.MINIMIZE)
+				type = IconType.MINIMIZE;
+			else if(_button_type == WindowButtonType.MAXIMIZE){
+				if(_window != null && _window.is_maximized())
+					type = IconType.UNMAXIMIZE;
+				else
+					type = IconType.MAXIMIZE;
+			} else
+				type = IconType.CLOSE;
+
+
+			IconState state;
+			if(!reset && _window != null && !_window.is_active())
+				state = IconState.UNFOCUSED;
+			else
+				state = IconState.FOCUSED;
+
+
+			Gdk.Pixbuf? icon = theme.get_icon(type, state, _current_action);
+
+
+			if(icon != null){
+				icon = icon.scale_simple(_icon_size, _icon_size, Gdk.InterpType.HYPER);
+				button_image.set_from_pixbuf(icon);
 			}
 
-			if(_icon != null){
-				button_image.set_from_pixbuf(_icon);
-			}
 		}
 
-		public void theme_set(string value){
-			_theme = value;
-			icon_theme.set_custom_theme(_theme);
+		private void event_set(Gdk.Event *event){
+			if(event->get_event_type() == Gdk.EventType.ENTER_NOTIFY || event->get_event_type() == Gdk.EventType.BUTTON_RELEASE)
+				_current_action = IconAction.HOVERED;
+			else if(event->get_event_type() == Gdk.EventType.BUTTON_PRESS)
+				_current_action = IconAction.PRESSED;
+			else
+				_current_action = IconAction.NORMAL;
+
+			this.update();
 		}
 
-		private void set_icon_by_name(string name){
-			try{
-				_icon = icon_theme.load_icon(name,-1,Gtk.IconLookupFlags.FORCE_SIZE);
-				_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
-			} catch (GLib.Error e){
-				stdout.printf("Error: %s\n", e.message);
-			}
+		public void reload(){
+			_current_action = IconAction.NORMAL;
+
+			this.update(true);
 		}
 
 	}

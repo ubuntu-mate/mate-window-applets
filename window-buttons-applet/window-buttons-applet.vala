@@ -29,14 +29,6 @@ namespace WindowButtonsApplet{
 		public ButtonsApplet(Gtk.Orientation orient){
 			Object(orientation: orient);
 
-			enabled_buttons.close = false;
-			enabled_buttons.minimize = false;
-			enabled_buttons.maximize = false;
-
-			this.add(CLOSE);
-			this.add(MINIMIZE);
-			this.add(MAXIMIZE);
-
 			this.set_homogeneous(true);
 
 			this.change_layout();
@@ -53,13 +45,18 @@ namespace WindowButtonsApplet{
 
 		// Helpers
 
-		private void reload_actions(Wnck.Window *window){
+		private void reload_actions(){
+			if( window == null ){
+				CLOSE.set_visible(false);
+				MINIMIZE.set_visible(false);
+				MAXIMIZE.set_visible(false);
+			} else {
 				Wnck.WindowActions actions = window->get_actions();
 				if(enabled_buttons.close == true){
 					if((Wnck.WindowActions.CLOSE & actions)>0){
 						CLOSE.set_visible(true);
 						CLOSE.window = window;
-						CLOSE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
+						CLOSE.reload();
 					} else CLOSE.set_visible(false);
 				}
 
@@ -67,7 +64,7 @@ namespace WindowButtonsApplet{
 					if((Wnck.WindowActions.MINIMIZE & actions)>0){
 						MINIMIZE.set_visible(true);
 						MINIMIZE.window = window;
-						MINIMIZE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
+						MINIMIZE.reload();
 					} else MINIMIZE.set_visible(false);
 				}
 
@@ -75,9 +72,10 @@ namespace WindowButtonsApplet{
 					if((Wnck.WindowActions.MAXIMIZE & actions)>0){
 						MAXIMIZE.set_visible(true);
 						MAXIMIZE.window = window;
-						MAXIMIZE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
+						MAXIMIZE.reload();
 					} else MAXIMIZE.set_visible(false);
 				}
+			}
 		}
 
 		public void reload(){
@@ -94,17 +92,12 @@ namespace WindowButtonsApplet{
 
 			window = get_current_window();
 
+			reload_actions();
+
 			// Watch for changes to new controlled window
 			if(window != null){
 				window->actions_changed.connect(reload);
 				window->state_changed.connect(reload);
-
-				reload_actions(window);
-			}
-			else {
-				CLOSE.set_visible(false);
-				MINIMIZE.set_visible(false);
-				MAXIMIZE.set_visible(false);
 			}
 
 			// When active window is not the controlled window (because it is unmaximized),
@@ -150,43 +143,45 @@ namespace WindowButtonsApplet{
 					enabled_buttons.maximize = true;
 				}
 			}
+
+			reload_actions();
 		}
 
 		public void change_theme(){
-			string theme = gsettings.get_string("theme");
+			string theme_name = gsettings.get_string("theme");
 
-			if(enabled_buttons.close){
-				CLOSE.theme_set(theme);
-				CLOSE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
-			}
+			WindowButtonsTheme theme = new WindowButtonsTheme(theme_name);
 
-			if(enabled_buttons.minimize){
-				MINIMIZE.theme_set(theme);
-				MINIMIZE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
-			}
+			CLOSE.theme = theme;
+			if(enabled_buttons.close)
+				CLOSE.reload();
 
-			if(enabled_buttons.maximize){
-				MAXIMIZE.theme_set(theme);
-				MAXIMIZE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
-			}
+			MINIMIZE.theme = theme;
+			if(enabled_buttons.minimize)
+				MINIMIZE.reload();
+
+			MAXIMIZE.theme = theme;
+			if(enabled_buttons.maximize)
+				MAXIMIZE.reload();
+
 		}
 
 		public void change_size(int size){
 			int padding = gsettings.get_int("padding");
 			size -= padding;
 
-			if(this.enabled_buttons.close == true){
-				CLOSE.icon_size = size;
-				CLOSE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
-			}
-			if(this.enabled_buttons.minimize == true){
-				MINIMIZE.icon_size = size;
-				MINIMIZE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
-			}
-			if(this.enabled_buttons.close == true){
-				MAXIMIZE.icon_size = size;
-				MAXIMIZE.icon_set(new Gdk.Event(Gdk.EventType.NOTHING));
-			}
+			CLOSE.icon_size = size;
+			if(this.enabled_buttons.close == true)
+				CLOSE.reload();
+			
+			MINIMIZE.icon_size = size;
+			if(this.enabled_buttons.minimize == true)
+				MINIMIZE.reload();
+			
+			MAXIMIZE.icon_size = size;
+			if(this.enabled_buttons.maximize == true)
+				MAXIMIZE.reload();
+			
 		}
 
 		public void change_orient(int orient){

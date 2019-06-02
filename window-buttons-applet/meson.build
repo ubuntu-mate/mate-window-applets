@@ -3,7 +3,7 @@ if get_option('build-window-buttons') == true
 message('Building with Window Buttons')
 
 target_name = 'window-buttons-applet'
-target_files = ['window-buttons-applet.vala','window-button.vala']
+target_files = ['window-buttons-applet.vala','window-button.vala','window-buttons-theme.vala']
 window_buttons_dir = applets_dir + 'window-buttons/'
 
 executable(target_name,target_files,dependencies: deps,install: true,install_dir: window_buttons_dir)

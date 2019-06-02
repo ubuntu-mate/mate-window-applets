@@ -12,9 +12,9 @@ else
 		echo "Installing icons in $DIR"
 
 		if [[ $1 == "install" ]]; then
-			cp -v -r data/icons $DIR
+			cp -v -r data/pixmaps $DIR
 		elif [[ $1 == "uninstall" ]]; then
-			rm -v -r $DIR"icons/mate-window-applets"
+			rm -v -r $DIR"pixmaps/mate-window-applets"
 		fi
 
 	else
@@ -29,9 +29,9 @@ else
 			
 			if [[ "$2" == "install" || "$2" == uninstall ]]; then	
 				if [[ $2 == "install" ]]; then
-					cp -v -r data/icons $DIR
+					cp -v -r data/pixmaps $DIR
 				elif [[ $2 == "uninstall" ]]; then
-					rm -v -r $DIR"icons/mate-window-applets"
+					rm -v -r $DIR"pixmaps/mate-window-applets"
 				else
 					echo "Usage: $0 {path}(optional) install/uninstall"
 				fi
