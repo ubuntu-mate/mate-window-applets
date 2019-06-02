@@ -27,11 +27,6 @@
 			</description>
 		</key>
 
-		<key name="theme" type="s">
-			<default>'Black'</default>
-			<summary>Buttons theme</summary>
-		</key>
-
 		<key name="spacing" type="i">
 			<default>8</default>
 			<summary>Spacing betwene buttons</summary>

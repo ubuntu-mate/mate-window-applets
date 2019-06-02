@@ -35,7 +35,7 @@ namespace WindowButtonsApplet{
 			this.change_theme();
 			this.change_spacing();
 
-			this.gsettings.changed["theme"].connect(this.change_theme);
+			this.marco_gsettings.changed["theme"].connect(this.change_theme);
 			this.gsettings.changed["spacing"].connect(this.change_spacing);
 			this.marco_gsettings.changed["button_layout"].connect(this.change_layout);
 
@@ -148,7 +148,7 @@ namespace WindowButtonsApplet{
 		}
 
 		public void change_theme(){
-			string theme_name = gsettings.get_string("theme");
+			string theme_name = marco_gsettings.get_string("theme");
 
 			WindowButtonsTheme theme = new WindowButtonsTheme(theme_name);
 
@@ -270,14 +270,12 @@ namespace WindowButtonsApplet{
 
 		widget_container.gsettings.bind("use-marco-layout",builder.get_object("use-marco-layout"),"state",SettingsBindFlags.DEFAULT);
 		widget_container.gsettings.bind("buttons-layout",builder.get_object("layout"),"text",SettingsBindFlags.DEFAULT);
-		widget_container.gsettings.bind("theme",builder.get_object("theme"),"text",SettingsBindFlags.DEFAULT);
 		widget_container.gsettings.bind("spacing",builder.get_object("spacing"),"value",SettingsBindFlags.DEFAULT);
 		widget_container.gsettings.bind("padding",builder.get_object("padding"),"value",SettingsBindFlags.DEFAULT);
 		widget_container.gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
 
 		widget_container.gsettings.changed["use-marco-layout"].connect(widget_container.change_layout);
 		widget_container.gsettings.changed["buttons-layout"].connect(widget_container.change_layout);
-		widget_container.gsettings.changed["theme"].connect(widget_container.change_theme);
 		widget_container.gsettings.changed["spacing"].connect( (key) => { widget_container.change_size(applet.get_size()); } );
 		widget_container.gsettings.changed["padding"].connect( (key) => { widget_container.change_size(applet.get_size()); } );
 		widget_container.gsettings.changed["behaviour"].connect( (key) => { widget_container.reload(); } );
