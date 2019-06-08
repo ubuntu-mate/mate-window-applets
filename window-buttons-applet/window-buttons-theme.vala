@@ -166,7 +166,12 @@ namespace WindowWidgets {
 			else
 				theme = "Black";
 
-			string[] paths = {"/usr/share/pixmaps/mate-window-applets/" + theme};
+			#if LOCAL_PATH
+				string[] paths = {"/usr/local/share/pixmaps/mate-window-applets/" + theme};
+			#else
+				string[] paths = {"/usr/share/pixmaps/mate-window-applets/" + theme};
+			#endif
+
 			load_icons(paths);
 		}
 
