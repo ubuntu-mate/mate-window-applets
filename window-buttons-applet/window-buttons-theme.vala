@@ -9,7 +9,7 @@ namespace WindowWidgets {
 		private string[,] _state_names;
 		private string[,] _action_names;
 
-		public WindowButtonsTheme(string name){
+		public WindowButtonsTheme(string name, Gdk.RGBA fg_color){
 			_pixbufs = new Gdk.Pixbuf[
 				IconType.TYPES,
 				IconState.STATES,
@@ -47,7 +47,7 @@ namespace WindowWidgets {
 			if( _pixbufs[IconType.CLOSE, IconState.FOCUSED, IconAction.NORMAL] == null
 				|| _pixbufs[IconType.MINIMIZE, IconState.FOCUSED, IconAction.NORMAL] == null
 				|| _pixbufs[IconType.MAXIMIZE, IconState.FOCUSED, IconAction.NORMAL] == null ) {
-				load_fallback_icons();
+				load_fallback_icons(fg_color);
 			}
 		}
 
@@ -158,8 +158,15 @@ namespace WindowWidgets {
 			return _pixbufs[type, state, action];
 		}
 
-		private void load_fallback_icons(){
-			string[] paths = {"/usr/share/pixmaps/mate-window-applets"};
+		private void load_fallback_icons(Gdk.RGBA fg_color){
+			double lum = 0.299*fg_color.red + 0.587*fg_color.green + 0.114*fg_color.blue;
+			string theme;
+			if(lum > 0.5)
+				theme = "White";
+			else
+				theme = "Black";
+
+			string[] paths = {"/usr/share/pixmaps/mate-window-applets/" + theme};
 			load_icons(paths);
 		}
 

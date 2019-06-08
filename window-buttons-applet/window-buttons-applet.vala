@@ -24,13 +24,17 @@ namespace WindowButtonsApplet{
 
 		protected EnabledButtons enabled_buttons = EnabledButtons();
 
+		private Gtk.StyleContext* applet_style_context;
+
 		// Constructor
 
-		public ButtonsApplet(Gtk.Orientation orient){
+		public ButtonsApplet(Gtk.Orientation orient, Gtk.StyleContext* applet_style_context){
 			Object(orientation: orient);
 
 			this.set_homogeneous(true);
 
+			this.applet_style_context = applet_style_context;
+			
 			this.change_layout();
 			this.change_theme();
 			this.change_spacing();
@@ -150,7 +154,9 @@ namespace WindowButtonsApplet{
 		public void change_theme(){
 			string theme_name = marco_gsettings.get_string("theme");
 
-			WindowButtonsTheme theme = new WindowButtonsTheme(theme_name);
+			Gdk.RGBA fg_color = applet_style_context->get_color(Gtk.StateFlags.ACTIVE);
+
+			WindowButtonsTheme theme = new WindowButtonsTheme(theme_name, fg_color);
 
 			CLOSE.theme = theme;
 			if(enabled_buttons.close)
@@ -251,7 +257,7 @@ namespace WindowButtonsApplet{
 		Gtk.Window settings = builder.get_object("Settings") as Gtk.Window;
 		Gtk.Window about = builder.get_object("About") as Gtk.Window;
 
-		var widget_container = new ButtonsApplet(Gtk.Orientation.HORIZONTAL);
+		var widget_container = new ButtonsApplet(Gtk.Orientation.HORIZONTAL, applet.get_style_context());
 
 		widget_container.show();
 		widget_container.change_orient(applet.get_orient());
