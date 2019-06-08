@@ -56,6 +56,8 @@ namespace WindowWidgets {
 				Environment.get_home_dir() + "/.icons/mate-window-applets/" + _theme_name,
 				Environment.get_home_dir() + "/.themes/" + _theme_name + "/metacity-1",
 				Environment.get_home_dir() + "/.themes/" + _theme_name + "/unity",
+				"/usr/local/share/themes/" + _theme_name + "/metacity-1",
+				"/usr/local/share/themes/" + _theme_name + "/unity",
 				"/usr/share/themes/" + _theme_name + "/metacity-1",
 				"/usr/share/themes/" + _theme_name + "/unity"
 			};
