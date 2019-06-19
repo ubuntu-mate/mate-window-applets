@@ -64,7 +64,7 @@ namespace WindowMenuApplet{
 		reload();
 
 	}
-		
+
 	private Wnck.Window get_current_window(){
 		Wnck.Window* win = null;
 		string behaviour = gsettings.get_string("behaviour");
@@ -81,7 +81,7 @@ namespace WindowMenuApplet{
 					win = null;
 			break;
 			case "topmost-maximized":
-				List<Wnck.Window*> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
+				List<weak Wnck.Window> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
 				windows.reverse();
 				foreach(Wnck.Window* w in windows) {
 					if(w->is_maximized() && !w->is_minimized()){
@@ -134,7 +134,7 @@ namespace WindowMenuApplet{
 
 		gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
 		gsettings.changed["behaviour"].connect( (key) => { reload(); } );
-		
+
 		applet.add(button);
 		applet.setup_menu(menu,action_group);
 

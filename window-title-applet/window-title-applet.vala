@@ -7,7 +7,7 @@ namespace WindowTitleApplet{
 	GLib.Settings gsettings;
 
 	public void reload(){
-		
+
 		// Disconnect signals from old window
 		if(window != null){
 			window->name_changed.disconnect(update);
@@ -64,7 +64,7 @@ namespace WindowTitleApplet{
 					win = null;
 			break;
 			case "topmost-maximized":
-				List<Wnck.Window*> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
+				List<weak Wnck.Window> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
 				windows.reverse();
 				foreach(Wnck.Window* w in windows) {
 					if(w->is_maximized() && !w->is_minimized()){
@@ -77,7 +77,7 @@ namespace WindowTitleApplet{
 
 		return win;
 	}
-		
+
 	private void clicked(Gdk.EventButton *event){
 		if(window != null){
 			window->activate(Gtk.get_current_event_time());

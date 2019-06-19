@@ -34,7 +34,7 @@ namespace WindowButtonsApplet{
 			this.set_homogeneous(true);
 
 			this.applet_style_context = applet_style_context;
-			
+
 			this.change_layout();
 			this.change_theme();
 			this.change_spacing();
@@ -179,15 +179,15 @@ namespace WindowButtonsApplet{
 			CLOSE.icon_size = size;
 			if(this.enabled_buttons.close == true)
 				CLOSE.reload();
-			
+
 			MINIMIZE.icon_size = size;
 			if(this.enabled_buttons.minimize == true)
 				MINIMIZE.reload();
-			
+
 			MAXIMIZE.icon_size = size;
 			if(this.enabled_buttons.maximize == true)
 				MAXIMIZE.reload();
-			
+
 		}
 
 		public void change_orient(int orient){
@@ -222,7 +222,7 @@ namespace WindowButtonsApplet{
 						win = null;
 				break;
 				case "topmost-maximized":
-					List<Wnck.Window*> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
+					List<weak Wnck.Window> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
 					windows.reverse();
 					foreach(Wnck.Window* w in windows) {
 						if(w->is_maximized() && !w->is_minimized()){
