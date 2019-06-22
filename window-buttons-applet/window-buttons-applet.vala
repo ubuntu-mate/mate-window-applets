@@ -38,6 +38,7 @@ namespace WindowButtonsApplet{
 			this.change_layout();
 			this.change_theme();
 			this.change_spacing();
+			this.change_behaviour();
 
 			this.marco_gsettings.changed["theme"].connect(this.change_theme);
 			this.gsettings.changed["spacing"].connect(this.change_spacing);
@@ -206,6 +207,15 @@ namespace WindowButtonsApplet{
 			this.set_spacing(spacing);
 		}
 
+		public void change_behaviour(){
+			string behaviour = gsettings.get_string("behaviour");
+
+			Wnck.Screen.get_default().window_closed.disconnect( reload );
+
+			if(behaviour == "topmost-maximized")
+				Wnck.Screen.get_default().window_closed.connect( reload );
+		}
+
 		private Wnck.Window get_current_window(){
 			Wnck.Window* win = null;
 			string behaviour = gsettings.get_string("behaviour");
@@ -284,7 +294,7 @@ namespace WindowButtonsApplet{
 		widget_container.gsettings.changed["buttons-layout"].connect(widget_container.change_layout);
 		widget_container.gsettings.changed["spacing"].connect( (key) => { widget_container.change_size(applet.get_size()); } );
 		widget_container.gsettings.changed["padding"].connect( (key) => { widget_container.change_size(applet.get_size()); } );
-		widget_container.gsettings.changed["behaviour"].connect( (key) => { widget_container.reload(); } );
+		widget_container.gsettings.changed["behaviour"].connect( () => { widget_container.change_behaviour(); widget_container.reload(); } );
 		applet.setup_menu(menu,action_group);
 
 		settings.delete_event.connect( (event) => { settings.hide() ; return true ; } );

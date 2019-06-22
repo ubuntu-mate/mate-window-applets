@@ -65,6 +65,15 @@ namespace WindowMenuApplet{
 
 	}
 
+	public void change_behaviour(){
+		string behaviour = gsettings.get_string("behaviour");
+
+		Wnck.Screen.get_default().window_closed.disconnect( reload );
+
+		if(behaviour == "topmost-maximized")
+			Wnck.Screen.get_default().window_closed.connect( reload );
+	}
+
 	private Wnck.Window get_current_window(){
 		Wnck.Window* win = null;
 		string behaviour = gsettings.get_string("behaviour");
@@ -102,6 +111,7 @@ namespace WindowMenuApplet{
 
 		button = new WindowMenuButton();
 
+		change_behaviour();
 		change_orient(applet);
 
 		Gtk.Builder builder = new Gtk.Builder();
@@ -133,7 +143,7 @@ namespace WindowMenuApplet{
 		menu += """<menuitem name="About" action="about" />""";
 
 		gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
-		gsettings.changed["behaviour"].connect( (key) => { reload(); } );
+		gsettings.changed["behaviour"].connect( () => { change_behaviour(); reload(); } );
 
 		applet.add(button);
 		applet.setup_menu(menu,action_group);

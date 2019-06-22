@@ -48,6 +48,15 @@ namespace WindowTitleApplet{
 		}
 	}
 
+	public void change_behaviour(){
+		string behaviour = gsettings.get_string("behaviour");
+
+		Wnck.Screen.get_default().window_closed.disconnect( reload );
+
+		if(behaviour == "topmost-maximized")
+			Wnck.Screen.get_default().window_closed.connect( reload );
+	}
+
 	private Wnck.Window get_current_window(){
 		Wnck.Window* win = null;
 		string behaviour = gsettings.get_string("behaviour");
@@ -98,6 +107,7 @@ namespace WindowTitleApplet{
 		title = new Gtk.Label("");
 		title.ellipsize = Pango.EllipsizeMode.END;
 
+		change_behaviour();
 		reload();
 
 		//title.set_label(Wnck.Screen.get_default().get_active_window().get_name());
@@ -131,7 +141,7 @@ namespace WindowTitleApplet{
 		menu += """<menuitem name="About" action="about" />""";
 
 		gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
-		gsettings.changed["behaviour"].connect( (key) => { reload(); } );
+		gsettings.changed["behaviour"].connect( () => { change_behaviour(); reload(); } );
 
 		applet.set_flags(MatePanel.AppletFlags.EXPAND_MINOR | MatePanel.AppletFlags.EXPAND_MAJOR);
 
