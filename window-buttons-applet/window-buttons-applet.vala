@@ -60,7 +60,7 @@ namespace WindowButtonsApplet{
 					if((Wnck.WindowActions.CLOSE & actions)>0){
 						CLOSE.set_visible(true);
 						CLOSE.window = window;
-						CLOSE.reload();
+						CLOSE.update();
 					} else CLOSE.set_visible(false);
 				}
 
@@ -68,7 +68,7 @@ namespace WindowButtonsApplet{
 					if((Wnck.WindowActions.MINIMIZE & actions)>0){
 						MINIMIZE.set_visible(true);
 						MINIMIZE.window = window;
-						MINIMIZE.reload();
+						MINIMIZE.update();
 					} else MINIMIZE.set_visible(false);
 				}
 
@@ -76,7 +76,7 @@ namespace WindowButtonsApplet{
 					if((Wnck.WindowActions.MAXIMIZE & actions)>0){
 						MAXIMIZE.set_visible(true);
 						MAXIMIZE.window = window;
-						MAXIMIZE.reload();
+						MAXIMIZE.update();
 					} else MAXIMIZE.set_visible(false);
 				}
 			}
@@ -160,15 +160,15 @@ namespace WindowButtonsApplet{
 
 			CLOSE.theme = theme;
 			if(enabled_buttons.close)
-				CLOSE.reload();
+				CLOSE.update(true);
 
 			MINIMIZE.theme = theme;
 			if(enabled_buttons.minimize)
-				MINIMIZE.reload();
+				MINIMIZE.update(true);
 
 			MAXIMIZE.theme = theme;
 			if(enabled_buttons.maximize)
-				MAXIMIZE.reload();
+				MAXIMIZE.update(true);
 
 		}
 
@@ -178,15 +178,15 @@ namespace WindowButtonsApplet{
 
 			CLOSE.icon_size = size;
 			if(this.enabled_buttons.close == true)
-				CLOSE.reload();
+				CLOSE.update();
 
 			MINIMIZE.icon_size = size;
 			if(this.enabled_buttons.minimize == true)
-				MINIMIZE.reload();
+				MINIMIZE.update();
 
 			MAXIMIZE.icon_size = size;
 			if(this.enabled_buttons.maximize == true)
-				MAXIMIZE.reload();
+				MAXIMIZE.update();
 
 		}
 

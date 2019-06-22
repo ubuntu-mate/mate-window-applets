@@ -81,7 +81,7 @@ namespace WindowWidgets{
 			}
 		}
 
-		public void update(bool reset = false){
+		public void update(bool theme_change = false){
 
 			IconType type;
 			if(_button_type == WindowButtonType.MINIMIZE)
@@ -96,7 +96,7 @@ namespace WindowWidgets{
 
 
 			IconState state;
-			if(!reset && _window != null && !_window.is_active())
+			if(_window != null && !_window.is_active())
 				state = IconState.UNFOCUSED;
 			else
 				state = IconState.FOCUSED;
@@ -104,6 +104,14 @@ namespace WindowWidgets{
 
 			Gdk.Pixbuf? icon = theme.get_icon(type, state, _current_action);
 
+			// If this is a new theme, and it doesn't have an icon for the current state and action, then reset
+			// everything, otherwise we would be showing the icons of the old theme
+			if(theme_change && icon == null){
+				state = IconState.FOCUSED;
+				_current_action = IconAction.NORMAL;
+
+				icon = theme.get_icon(type, state, _current_action);
+			}
 
 			if(icon != null){
 				icon = icon.scale_simple(_icon_size, _icon_size, Gdk.InterpType.HYPER);
@@ -121,12 +129,6 @@ namespace WindowWidgets{
 				_current_action = IconAction.NORMAL;
 
 			this.update();
-		}
-
-		public void reload(){
-			_current_action = IconAction.NORMAL;
-
-			this.update(true);
 		}
 
 	}
