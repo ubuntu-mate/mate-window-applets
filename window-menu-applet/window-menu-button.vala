@@ -52,7 +52,7 @@ namespace WindowWidgets{
 
 		public void menu_set(){
 
-			if(_window != null && _window.get_class_instance_name() != "desktop_window"){
+			if(_window != null){
 				this.set_popup(new Wnck.ActionMenu(_window));
 				this.set_sensitive(true);
 			}

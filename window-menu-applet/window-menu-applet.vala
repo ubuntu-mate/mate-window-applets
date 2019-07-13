@@ -81,6 +81,8 @@ namespace WindowMenuApplet{
 		switch(behaviour){
 			case "active-always":
 				win = Wnck.Screen.get_default().get_active_window();
+				if(win != null && win->get_class_instance_name() == "desktop_window")
+					win = null;
 			break;
 			case "active-maximized":
 				win = Wnck.Screen.get_default().get_active_window();
