@@ -78,8 +78,6 @@ namespace WindowMenuApplet{
 		Wnck.Window* win = null;
 		string behaviour = gsettings.get_string("behaviour");
 
-		Wnck.Screen.get_default().force_update();
-
 		switch(behaviour){
 			case "active-always":
 				win = Wnck.Screen.get_default().get_active_window();
