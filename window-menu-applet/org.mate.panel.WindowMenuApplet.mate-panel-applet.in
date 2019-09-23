@@ -12,5 +12,5 @@ Name[de]=Fenstermenü
 Description=A applet that shows window menu on panel
 Description[bg]=Аплет който показва менюто на прозореца върху панела
 Description[de]=Zeigt das Fenstermenü in der Leiste
-Icon=mate
+Icon=menu-editor
 MateComponentId=OAFIID:MATE_WindowMenuApplet;

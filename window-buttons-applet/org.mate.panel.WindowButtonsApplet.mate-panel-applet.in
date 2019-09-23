@@ -13,5 +13,5 @@ Name[de]=Fensterknöpfe
 Description=A applet that shows window buttons on panel
 Description[bg]=Аплет който показва бутоните на прозореца върху панела
 Description[de]=Zeigt die Fensterknöpfe in der Leiste
-Icon=mate
+Icon=window-close
 MateComponentId=OAFIID:MATE_WindowButtonsApplet;

@@ -12,5 +12,5 @@ Name[de]=Fenstertitel
 Description=A applet that shows window title on panel
 Description[bg]=Аплет който показва заглавието на прозореца върху панела
 Description[de]=Zeigt den Fenstertitel in der Leiste
-Icon=mate
+Icon=user-desktop
 MateComponentId=OAFIID:MATE_WindowTitleApplet;
