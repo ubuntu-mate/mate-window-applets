@@ -59,13 +59,17 @@ namespace WindowTitleApplet{
 
 	private Wnck.Window get_current_window(){
 		Wnck.Window* win = null;
+		Wnck.WindowType window_type;
 		string behaviour = gsettings.get_string("behaviour");
 
 		switch(behaviour){
 			case "active-always":
 				win = Wnck.Screen.get_default().get_active_window();
-				if(win != null && win->get_class_instance_name() == "desktop_window")
-					win = null;
+				if(win != null){
+					window_type = win->get_window_type();
+					if(window_type == Wnck.WindowType.DESKTOP || window_type == Wnck.WindowType.DOCK)
+						win = null;
+				}
 			break;
 			case "active-maximized":
 				win = Wnck.Screen.get_default().get_active_window();
