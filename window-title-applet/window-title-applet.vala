@@ -1,120 +1,123 @@
 namespace WindowTitleApplet{
 
-	Gtk.Label title;
-	Wnck.Window *window;
-	Wnck.Window *active_window;
+	class WindowTitle {
+		public Gtk.Label title;
+		private Wnck.Window *window;
+		private Wnck.Window *active_window;
 
-	GLib.Settings gsettings;
+		public GLib.Settings gsettings = new GLib.Settings("org.mate.window-applets.window-title");
 
-	public void reload(){
+		public WindowTitle(){
+			title = new Gtk.Label("");
+			title.ellipsize = Pango.EllipsizeMode.END;
 
-		// Disconnect signals from old window
-		if(window != null){
-			window->name_changed.disconnect(update);
-			window->state_changed.disconnect(reload);
+			change_behaviour();
+			reload();
 		}
 
-		if(active_window != null)
-			active_window->state_changed.disconnect(reload);
+		public void reload(){
+
+			// Disconnect signals from old window
+			if(window != null){
+				window->name_changed.disconnect(update);
+				window->state_changed.disconnect(reload);
+			}
+
+			if(active_window != null)
+				active_window->state_changed.disconnect(reload);
 
 
-		window = get_current_window();
+			window = get_current_window();
 
-		update();
+			update();
 
 
-		// Watch for changes to new controlled window
-		if(window != null){
-			window->name_changed.connect(update);
-			window->state_changed.connect(reload);
+			// Watch for changes to new controlled window
+			if(window != null){
+				window->name_changed.connect(update);
+				window->state_changed.connect(reload);
+			}
+
+			// When active window is not the controlled window (because it is unmaximized),
+			// we need to watch its state as well
+			active_window = Wnck.Screen.get_default().get_active_window();
+			if(active_window != null && active_window != window)
+				active_window->state_changed.connect(reload);
 		}
 
-		// When active window is not the controlled window (because it is unmaximized),
-		// we need to watch its state as well
-		active_window = Wnck.Screen.get_default().get_active_window();
-		if(active_window != null && active_window != window)
-			active_window->state_changed.connect(reload);
-	}
-
-	public void update(){
-		if(window != null){
-			string title_text = GLib.Markup.escape_text(window->get_name());
-			if(window->is_active())
-				title.set_markup(title_text);
-			else
-				title.set_markup("<span color='#808080'>"+title_text+"</span>");
-		} else {
-			title.set_label("");
-		}
-	}
-
-	public void change_behaviour(){
-		string behaviour = gsettings.get_string("behaviour");
-
-		Wnck.Screen.get_default().window_closed.disconnect( reload );
-
-		if(behaviour == "topmost-maximized")
-			Wnck.Screen.get_default().window_closed.connect( reload );
-	}
-
-	private Wnck.Window get_current_window(){
-		Wnck.Window* win = null;
-		Wnck.WindowType window_type;
-		string behaviour = gsettings.get_string("behaviour");
-
-		switch(behaviour){
-			case "active-always":
-				win = Wnck.Screen.get_default().get_active_window();
-				if(win != null){
-					window_type = win->get_window_type();
-					if(window_type == Wnck.WindowType.DESKTOP || window_type == Wnck.WindowType.DOCK)
-						win = null;
-				}
-			break;
-			case "active-maximized":
-				win = Wnck.Screen.get_default().get_active_window();
-				if(win != null && !win->is_maximized())
-					win = null;
-			break;
-			case "topmost-maximized":
-				List<weak Wnck.Window> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
-				windows.reverse();
-				foreach(Wnck.Window* w in windows) {
-					if(w->is_maximized() && !w->is_minimized()){
-						win = w;
-						break;
-					}
-				}
-			break;
-		}
-
-		return win;
-	}
-
-	private void clicked(Gdk.EventButton *event){
-		if(window != null){
-			window->activate(Gtk.get_current_event_time());
-			if(event->type == Gdk.EventType.2BUTTON_PRESS) {
-				if(window->is_maximized())
-					window->unmaximize();
+		public void update(){
+			if(window != null){
+				string title_text = GLib.Markup.escape_text(window->get_name());
+				if(window->is_active())
+					title.set_markup(title_text);
 				else
-					window->maximize();
+					title.set_markup("<span color='#808080'>"+title_text+"</span>");
+			} else {
+				title.set_label("");
 			}
 		}
+
+		public void change_behaviour(){
+			string behaviour = gsettings.get_string("behaviour");
+
+			Wnck.Screen.get_default().window_closed.disconnect( reload );
+
+			if(behaviour == "topmost-maximized")
+				Wnck.Screen.get_default().window_closed.connect( reload );
+		}
+
+		private Wnck.Window get_current_window(){
+			Wnck.Window* win = null;
+			Wnck.WindowType window_type;
+			string behaviour = gsettings.get_string("behaviour");
+
+			switch(behaviour){
+				case "active-always":
+					win = Wnck.Screen.get_default().get_active_window();
+					if(win != null){
+						window_type = win->get_window_type();
+						if(window_type == Wnck.WindowType.DESKTOP || window_type == Wnck.WindowType.DOCK)
+							win = null;
+					}
+				break;
+				case "active-maximized":
+					win = Wnck.Screen.get_default().get_active_window();
+					if(win != null && !win->is_maximized())
+						win = null;
+				break;
+				case "topmost-maximized":
+					List<weak Wnck.Window> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
+					windows.reverse();
+					foreach(Wnck.Window* w in windows) {
+						if(w->is_maximized() && !w->is_minimized()){
+							win = w;
+							break;
+						}
+					}
+				break;
+			}
+
+			return win;
+		}
+
+		public void clicked(Gdk.EventButton *event){
+			if(window != null){
+				window->activate(Gtk.get_current_event_time());
+				if(event->type == Gdk.EventType.2BUTTON_PRESS) {
+					if(window->is_maximized())
+						window->unmaximize();
+					else
+						window->maximize();
+				}
+			}
+		}
+
 	}
 
 	private bool factory(MatePanel.Applet applet,string iid){
 		if(iid != "WindowTitleApplet")return false;
 
-		gsettings = new GLib.Settings("org.mate.window-applets.window-title");
-
-		title = new Gtk.Label("");
-		title.ellipsize = Pango.EllipsizeMode.END;
-
-		change_behaviour();
-		reload();
-
-		//title.set_label(Wnck.Screen.get_default().get_active_window().get_name());
+		var windowTitle = new WindowTitle();
 
 		Gtk.Builder builder = new Gtk.Builder();
 
@@ -144,12 +147,12 @@ namespace WindowTitleApplet{
 		string menu = """<menuitem name="Settings" action="settings" />""";
 		menu += """<menuitem name="About" action="about" />""";
 
-		gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
-		gsettings.changed["behaviour"].connect( () => { change_behaviour(); reload(); } );
+		windowTitle.gsettings.bind("behaviour",builder.get_object("behaviour"),"active_id",SettingsBindFlags.DEFAULT);
+		windowTitle.gsettings.changed["behaviour"].connect( () => { windowTitle.change_behaviour(); windowTitle.reload(); } );
 
 		applet.set_flags(MatePanel.AppletFlags.EXPAND_MINOR | MatePanel.AppletFlags.EXPAND_MAJOR);
 
-		applet.add(title);
+		applet.add(windowTitle.title);
 		applet.setup_menu(menu,action_group);
 
 		settings.delete_event.connect( (event) => { settings.hide() ; return true ; } );
@@ -158,14 +161,14 @@ namespace WindowTitleApplet{
 		settings_action.activate.connect( () => { settings.present() ; } );
 		about_action.activate.connect( () => { about.present() ; } );
 
-		applet.button_press_event.connect( (widget,event) => { clicked(event); return false; } );
+		applet.button_press_event.connect( (widget,event) => { windowTitle.clicked(event); return false; } );
 
 		//applet.change_size.connect();
 
 		//--//applet.add(widget_container);
 		applet.show_all();
 
-		Wnck.Screen.get_default().active_window_changed.connect( reload );
+		Wnck.Screen.get_default().active_window_changed.connect( windowTitle.reload );
 
 		return true;
 	}
