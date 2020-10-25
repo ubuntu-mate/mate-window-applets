@@ -2,8 +2,10 @@ namespace WindowTitleApplet{
 
 	class WindowTitle {
 		public Gtk.Label title;
+		public Gdk.Monitor monitor;
 		private Wnck.Window *window;
 		private Wnck.Window *active_window;
+		private Gdk.Monitor active_window_monitor;
 
 		public GLib.Settings gsettings = new GLib.Settings("org.mate.window-applets.window-title");
 
@@ -12,7 +14,6 @@ namespace WindowTitleApplet{
 			title.ellipsize = Pango.EllipsizeMode.END;
 
 			change_behaviour();
-			reload();
 		}
 
 		public void reload(){
@@ -23,8 +24,10 @@ namespace WindowTitleApplet{
 				window->state_changed.disconnect(reload);
 			}
 
-			if(active_window != null)
+			if(active_window != null){
 				active_window->state_changed.disconnect(reload);
+				active_window->geometry_changed.disconnect(detect_monitor_change);
+			}
 
 
 			window = get_current_window();
@@ -38,11 +41,15 @@ namespace WindowTitleApplet{
 				window->state_changed.connect(reload);
 			}
 
-			// When active window is not the controlled window (because it is unmaximized),
-			// we need to watch its state as well
 			active_window = Wnck.Screen.get_default().get_active_window();
-			if(active_window != null && active_window != window)
-				active_window->state_changed.connect(reload);
+			if(active_window != null){
+				// When active window is not the controlled window (because it is unmaximized),
+				// we need to watch its state as well
+				if(active_window != window)
+					active_window->state_changed.connect(reload);
+
+				active_window->geometry_changed.connect(detect_monitor_change);
+			}
 		}
 
 		public void update(){
@@ -66,42 +73,51 @@ namespace WindowTitleApplet{
 				Wnck.Screen.get_default().window_closed.connect( reload );
 		}
 
-		private Wnck.Window get_current_window(){
-			Wnck.Window* win = null;
+		private Wnck.Window? get_current_window(){
 			Wnck.WindowType window_type;
 			string behaviour = gsettings.get_string("behaviour");
+			Wnck.Workspace active_workspace = Wnck.Screen.get_default().get_active_workspace();
 
-			switch(behaviour){
-				case "active-always":
-					win = Wnck.Screen.get_default().get_active_window();
-					if(win != null){
-						window_type = win->get_window_type();
-						if(window_type == Wnck.WindowType.DESKTOP || window_type == Wnck.WindowType.DOCK)
-							win = null;
-					}
-				break;
-				case "active-maximized":
-					win = Wnck.Screen.get_default().get_active_window();
-					if(win != null && !win->is_maximized())
-						win = null;
-				break;
-				case "topmost-maximized":
-					List<weak Wnck.Window> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
-					windows.reverse();
-					foreach(Wnck.Window* w in windows) {
-						if(w->is_maximized() && !w->is_minimized()){
-							win = w;
-							break;
-						}
-					}
-				break;
+			List<weak Wnck.Window> windows = Wnck.Screen.get_default().get_windows_stacked().copy();
+			windows.reverse();
+
+			foreach(Wnck.Window* win in windows) {
+				window_type = win->get_window_type();
+				if(window_type == Wnck.WindowType.DESKTOP || window_type == Wnck.WindowType.DOCK)
+					continue;
+
+				if(win->is_minimized())
+					continue;
+
+				if(!win->is_on_workspace(active_workspace))
+					continue;
+
+				if(monitor != get_monitor_at_window(win))
+					continue;
+
+				switch(behaviour){
+					case "active-always":
+						return win;
+
+					case "active-maximized":
+						if(win->is_maximized())
+							return win;
+						else
+							return null;
+
+					case "topmost-maximized":
+						if(win->is_maximized())
+							return win;
+					break;
+				}
 			}
 
-			return win;
+			return null;
 		}
 
 		public void clicked(Gdk.EventButton *event){
 			if(window != null){
+				Wnck.Screen.get_default().force_update();
 				window->activate(Gtk.get_current_event_time());
 				if(event->type == Gdk.EventType.2BUTTON_PRESS) {
 					if(window->is_maximized())
@@ -109,6 +125,22 @@ namespace WindowTitleApplet{
 					else
 						window->maximize();
 				}
+			}
+		}
+
+		private Gdk.Monitor? get_monitor_at_window(Wnck.Window *win){
+			int x, y, w, h;
+
+			win->get_client_window_geometry(out x, out y, out w, out h);
+
+			return Gdk.Display.get_default().get_monitor_at_point(x + w/2, y + h/2);
+		}
+
+		private void detect_monitor_change(){
+			Gdk.Monitor mon = get_monitor_at_window(active_window);
+			if(mon != active_window_monitor){
+				active_window_monitor = mon;
+				reload();
 			}
 		}
 
@@ -169,6 +201,10 @@ namespace WindowTitleApplet{
 		applet.show_all();
 
 		Wnck.Screen.get_default().active_window_changed.connect( windowTitle.reload );
+
+		windowTitle.monitor = applet.get_parent_window().get_screen().get_display().get_monitor_at_window(applet.get_parent_window());
+
+		windowTitle.reload();
 
 		return true;
 	}
