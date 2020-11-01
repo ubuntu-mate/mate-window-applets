@@ -101,7 +101,7 @@ namespace WindowMenuApplet{
 				if(win->is_minimized())
 					continue;
 
-				if(!win->is_on_workspace(active_workspace))
+				if(!win->is_in_viewport(active_workspace))
 					continue;
 
 				if(monitor != get_monitor_at_window(win))
