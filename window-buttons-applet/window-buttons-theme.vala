@@ -2,6 +2,8 @@ namespace WindowWidgets {
 	public class WindowButtonsTheme {
 
 		private string _theme_name;
+		private int _icon_size;
+		private int _scale_factor;
 		private Gdk.Pixbuf[,,] _pixbufs;
 		private string[] _extensions;
 		private string[] _prefixes;
@@ -9,7 +11,7 @@ namespace WindowWidgets {
 		private string[,] _state_names;
 		private string[,] _action_names;
 
-		public WindowButtonsTheme(string name, Gdk.RGBA fg_color){
+		public WindowButtonsTheme(string name, Gdk.RGBA fg_color, int icon_size, int scale_factor){
 			_pixbufs = new Gdk.Pixbuf[
 				IconType.TYPES,
 				IconState.STATES,
@@ -18,7 +20,10 @@ namespace WindowWidgets {
 
 			_theme_name = name;
 
-			_extensions = {"png", "svg"};
+			_icon_size = icon_size;
+			_scale_factor = scale_factor;
+
+			_extensions = {"svg", "png"};
 
 			_prefixes = {null, "button", "icon"};
 
@@ -121,7 +126,7 @@ namespace WindowWidgets {
 			string file_path = find_icon_filepath(paths, icon_names);
 			if( file_path != null ){
 				try {
-					return new Gdk.Pixbuf.from_file(file_path);
+					return new Gdk.Pixbuf.from_file_at_size(file_path, this._icon_size * this._scale_factor, this._icon_size * this._scale_factor);
 				} catch (GLib.Error e){
 					stdout.printf("Error: %s\n", e.message);
 				}

@@ -114,8 +114,8 @@ namespace WindowWidgets{
 			}
 
 			if(icon != null){
-				icon = icon.scale_simple(_icon_size, _icon_size, Gdk.InterpType.HYPER);
-				button_image.set_from_pixbuf(icon);
+				Cairo.Surface surface = Gdk.cairo_surface_create_from_pixbuf(icon, this.get_scale_factor(), null);
+				button_image.set_from_surface(surface);
 			}
 
 		}
