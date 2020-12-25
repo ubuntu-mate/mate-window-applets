@@ -39,11 +39,14 @@ namespace WindowWidgets{
 		public void	icon_set(){
 			if(_window != null){
 				_icon = _window.get_icon();
-				_icon = _icon.scale_simple(_icon_size,_icon_size,Gdk.InterpType.HYPER);
+				_icon = _icon.scale_simple(_icon_size * this.get_scale_factor(),_icon_size * this.get_scale_factor(), Gdk.InterpType.HYPER);
+
 				if(!_window.is_active()){
 					_icon.saturate_and_pixelate(_icon, 0, false);
 				}
-				button_image.set_from_pixbuf(_icon);
+
+				Cairo.Surface surface = Gdk.cairo_surface_create_from_pixbuf(_icon, this.get_scale_factor(), null);
+				button_image.set_from_surface(surface);
 			}
 			else {
 				button_image.clear();
